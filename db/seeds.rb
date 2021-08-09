@@ -5,3 +5,11 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+contents = [
+  'Railsを勉強する',
+  'Linuxを勉強する',
+  'AWSを勉強する'
+]
+
+contents.each { |c| Todo.create(content: c) }
