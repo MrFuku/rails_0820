@@ -1,11 +1,7 @@
 name: Ruby
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: push
 jobs:
-  test:
+  run_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -35,12 +31,17 @@ jobs:
       with:
         name: rspec result screenshots
         path: tmp/screenshots/
-    - uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-1
-    - name: Set AWS region
-      run: aws configure set region ap-northeast-1
-    - name: Run AWS CodeDeploy
-      run: aws deploy create-deployment --application-name RailsDeployDemo --deployment-group-name TestGroup --github-location repository="MrFuku/rails_0820",commitId="${{ github.sha }}"
+  run_deploy:
+    if: github.base_ref == 'master'
+    runs-on: ubuntu-latest
+    needs: run_test
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
+      - name: Set AWS region
+        run: aws configure set region ap-northeast-1
+      - name: Run AWS CodeDeploy
+        run: aws deploy create-deployment --application-name RailsDeployDemo --deployment-group-name TestGroup --github-location repository="MrFuku/rails_0820",commitId="${{ github.sha }}"
