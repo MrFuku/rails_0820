@@ -1,34 +1,20 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
-# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
-
 name: Ruby
-
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
 jobs:
   test:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby-version: ['2.7.2']
-
     steps:
     - uses: actions/checkout@v2
     - name: Install dependent libralies
       run: sudo apt install -y libmysqlclient-dev
     - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
       uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e
       with:
         ruby-version: ${{ matrix.ruby-version }}
@@ -58,23 +44,3 @@ jobs:
       run: aws configure set region ap-northeast-1
     - name: Run AWS CodeDeploy
       run: aws deploy create-deployment --application-name RailsDeployDemo --deployment-group-name TestGroup --github-location repository="MrFuku/rails_0820",commitId="${{ github.sha }}"
-
-    # - name: Deploy
-    #   env:
-    #     A: ${{ secrets.A }}
-    #     B: ${{ secrets.B }}
-    #     C: ${{ secrets.C }}
-    #   # ↓実行したいコマンド
-    #   run: |
-    #     echo "$A" > A && chmod 600 A
-    #     ssh -o StrictHostKeyChecking=no -i A ${B}@${C} \
-    #     'export PATH=$HOME/.rbenv/bin:$PATH &&
-    #     eval "$(rbenv init -)" &&
-    #     export PATH=$HOME/.nodenv/bin:$PATH &&
-    #     eval "$(nodenv init -)" &&
-    #     cd ~/rails_0820 &&
-    #     git pull origin master &&
-    #     bundle &&
-    #     bundle exec rails db:migrate &&
-    #     kill $(cat tmp/pids/server.pid) &&
-    #     bundle exec rails s -d -b 0.0.0.0'
