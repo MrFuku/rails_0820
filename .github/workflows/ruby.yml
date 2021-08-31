@@ -33,3 +33,17 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run tests
       run: bundle exec rspec
+    - name: Deploy
+      env:
+        A: ${{ secrets.A }}
+        B: ${{ secrets.B }}
+        C: ${{ secrets.C }}
+      # ↓実行したいコマンド
+      run: |
+        echo "$A" > A && chmod 600 A
+        ssh -o StrictHostKeyChecking=no -i A ${B}@${C} 'source ~/.bashrc && cd ~/rails_0820 &&
+        git pull origin master &&
+        ~/.rbenv/shims/bundle &&
+        ~/.rbenv/shims/bundle exec rails db:migrate &&
+        kill $(cat tmp/pids/puma.pid) &&
+        ~/.rbenv/shims/bundle s -b 0.0.0.0'
