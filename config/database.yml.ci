@@ -1,0 +1,9 @@
+test:
+  adapter: mysql2
+  charset: utf8mb4
+  collation: utf8mb4_bin
+  encoding: utf8mb4
+  database: rails_0820_test
+  pool: 5
+  username: root
+  password: root

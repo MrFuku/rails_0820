@@ -23,6 +23,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install dependent libralies
+      run: sudo apt install -y libmysqlclient-dev
     - name: Set up Ruby
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
@@ -31,6 +33,14 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Setup Database
+      run: |
+        cp config/database.yml.ci config/database.yml
+        sudo systemctl start mysql
+        bundle exec rails db:create
+        bundle exec rails db:schema:load
+      env:
+        RAILS_ENV: test
     - name: Run tests
       run: bundle exec rspec
     - name: Deploy
