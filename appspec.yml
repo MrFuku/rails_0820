@@ -1,4 +1,3 @@
-# This is an appspec.
 version: 0.0
 os: linux
 files:
